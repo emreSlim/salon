@@ -27,16 +27,15 @@ then
 else
   echo "What's your phone number?"
   read CUSTOMER_PHONE
-  cid=`query "select customer_id from customers where phone='$CUSTOMER_PHONE'" | sed -r 's/^ *| *$//'`
-  if [[ -z $cid ]]
+  CUSTOMER_NAME=`query "select name from customers where phone='$CUSTOMER_PHONE'" | sed -r 's/^ *| *$//'`
+
+  if [[ -z $CUSTOMER_NAME ]]
   then
     echo "I don't have a record for that phone number, what's your name?"
     read CUSTOMER_NAME
     cinsert=`query "insert into customers(phone,name) values('$CUSTOMER_PHONE','$CUSTOMER_NAME')"`
-    cid=`query "select customer_id from customers where phone='$CUSTOMER_PHONE'" | sed -r 's/^ *| *$//'`
-  else
-    CUSTOMER_NAME=`query "select name from customers where customer_id=$cid" | sed -r 's/^ *| *$//'`
   fi
+   cid=`query "select customer_id from customers where phone='$CUSTOMER_PHONE'" | sed -r 's/^ *| *$//'`
   echo "What time would you like your $sname, $CUSTOMER_NAME?"
   read SERVICE_TIME
   sinsert=`query "insert into appointments (customer_id,service_id,time) values($cid,$SERVICE_ID_SELECTED,'$SERVICE_TIME')"`
